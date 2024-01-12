@@ -1,0 +1,17 @@
+package com.example.ToDoApp;
+
+import org.springframework.stereotype.Service;
+
+@Service
+public class ToDoService {
+   
+	getAllToDoItems(){
+		
+	}
+	
+	update(){
+		
+	}
+	save();
+	delete();
+}

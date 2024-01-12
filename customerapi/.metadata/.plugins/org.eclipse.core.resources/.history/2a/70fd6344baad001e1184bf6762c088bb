@@ -1,0 +1,102 @@
+package com.restapi.customer.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.bind.annotation.*;
+
+import com.restapi.customer.entity.AuthRequest;
+import com.restapi.customer.entity.JwtAuthResponse;
+import com.restapi.customer.entity.UserInfo;
+import com.restapi.customer.service.JwtService;
+import com.restapi.customer.service.UserInfoService;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.util.StreamUtils;
+
+If you want to use @RestController to serve HTML content, you can still return HTML as a string from a method annotated with @GetMapping or @RequestMapping. However, keep in mind that @RestController is typically used for RESTful services that return data in a format like JSON. Using it for serving HTML is not the conventional use case.
+
+Here's an example:
+
+Create an HTML file (e.g., index.html) and place it in the src/main/resources/templates directory:
+html
+Copy code
+<!-- src/main/resources/templates/index.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spring Boot HTML Example</title>
+</head>
+<body>
+    <h1>Hello, Spring Boot with @RestController!</h1>
+</body>
+</html>
+Create a @RestController class to handle requests and return HTML content:
+java
+Copy code
+// src/main/java/com/example/demo/controller/HtmlRestController.java
+
+package com.example.demo.controller;
+
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.util.StreamUtils;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+
+@RestController
+//@RequestMapping("/auth")
+public class UserController {
+    @Autowired
+    private UserInfoService userInfoService;
+    @Autowired
+    private AuthenticationManager authenticationManager;
+    @Autowired
+    private JwtService jwtService;
+
+    @GetMapping("/welcome")
+    public String welcome(){
+    	Resource resource = new ClassPathResource("templates/welcome.html");
+        return StreamUtils.copyToString(resource.getInputStream(), StandardCharsets.UTF_8);
+    }
+
+    @PostMapping("/register")
+    public String register(@RequestBody UserInfo userInfo){
+        return userInfoService.addUser(userInfo);
+
+    }
+    
+    @PostMapping("/login")
+    public ResponseEntity<JwtAuthResponse> loginUser(@RequestBody AuthRequest authRequest){
+        Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword()));
+        if(authenticate.isAuthenticated()){
+        	String token= jwtService.generateToken(authRequest.getEmail());
+        	JwtAuthResponse response = new JwtAuthResponse();
+        	response.setToken(token);
+        	response.setTokenUser(authRequest.getEmail());
+        	return new ResponseEntity<JwtAuthResponse>(response, HttpStatus.OK);
+        }else {
+            throw new UsernameNotFoundException("Invalid user request");
+        }
+    }
+    
+    @GetMapping("/getUsers")
+    public List<UserInfo> getAllUsers(){   	
+        return userInfoService.getAllUser();
+    }
+    
+
+}

@@ -1,0 +1,9 @@
+package com.example.ToDoApp.controller;
+
+
+@Controller
+public class ToDoController {
+
+	@Autowired
+	private ToDoService service;
+}

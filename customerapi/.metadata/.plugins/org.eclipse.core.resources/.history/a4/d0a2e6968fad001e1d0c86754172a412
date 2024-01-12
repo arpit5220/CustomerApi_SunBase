@@ -1,0 +1,72 @@
+package com.restapi.customer.exception;
+
+import java.util.HashMap;
+import java.util.Map;
+
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ProblemDetail;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.ErrorResponse;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import com.restapi.customer.payload.ApiResponse;
+
+import jakarta.validation.ConstraintViolationException;
+
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+	
+	@ExceptionHandler(ResourceNotFoundException.class)
+	public ResponseEntity<ApiResponse> resourceNotFoundExceptionHandler(ResourceNotFoundException ex) {
+		String message = ex.getMessage();
+		ApiResponse apiResponse = new ApiResponse(message, false);
+		return new ResponseEntity<ApiResponse>(apiResponse, HttpStatus.NOT_FOUND);
+	}
+	
+	
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public ResponseEntity<Map<String, String>> handleMethodArgsNotValidException(MethodArgumentNotValidException ex) {
+		Map<String, String> resp = new HashMap<>();
+		ex.getBindingResult().getAllErrors().forEach((error) -> {
+			String fieldName = ((FieldError)error).getField();
+			String message = error.getDefaultMessage();
+			resp.put(fieldName, message);
+		});
+
+		return new ResponseEntity<Map<String, String>>(resp, HttpStatus.BAD_REQUEST);
+	}
+	
+	
+	@ExceptionHandler(ConstraintViolationException.class)
+	public ErrorResponse handleMethodArgsNotValidException(ConstraintViolationException ex) {
+		ErrorResponse errorResponse = new ErrorResponse() {
+			
+			@Override
+			public HttpStatusCode getStatusCode() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public ProblemDetail getBody() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+		};();
+		  errorResponse.setStatus(Response.Status.BAD_REQUEST.getStatusCode());
+		  errorResponse.setMessage("Validation failed, check below errors for detail.");
+		  List<ValidationError> validationErrors = new ArrayList<>();
+		  exception.getConstraintViolations().forEach(e ->
+		  validationErrors.add(new ValidationError(getViolationPath(e), e.getMessage(), getViolationInvalidValue(e.getInvalidValue()))));
+		  errorResponse.setValidationErrors(validationErrors);
+		  return errorResponse;
+	}
+	
+	
+
+}

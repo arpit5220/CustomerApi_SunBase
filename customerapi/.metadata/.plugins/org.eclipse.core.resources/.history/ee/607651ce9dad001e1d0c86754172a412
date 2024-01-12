@@ -1,0 +1,36 @@
+package com.example.ToDoApp.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.example.ToDoApp.model.ToDo;
+import com.example.ToDoApp.repo.IToDoRepo;
+
+@Service
+public class ToDoService {
+   
+	@Autowired
+	private IToDoRepo repo;
+	
+	List<ToDo>getAllToDoItems(){
+		
+	}
+	
+	ToDo getToDoItemById(){
+		
+	}
+	
+	boolean updateStatus(){
+		
+	}
+	
+	boolean saveorUpdateToDoItem(){
+		
+	}
+	
+	boolean deleteToDoItem(){
+		
+	}
+}

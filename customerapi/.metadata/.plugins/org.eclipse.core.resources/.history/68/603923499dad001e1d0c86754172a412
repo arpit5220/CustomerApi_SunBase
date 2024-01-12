@@ -1,0 +1,9 @@
+package com.example.ToDoApp;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.example.ToDoApp.model.ToDo;
+
+public interface IToDoRepo extends JpaRepository<ToDo, Long>  {
+
+}

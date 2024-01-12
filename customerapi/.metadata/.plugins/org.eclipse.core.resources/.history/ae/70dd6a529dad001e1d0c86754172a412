@@ -1,0 +1,32 @@
+package com.example.ToDoApp;
+
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import com.example.ToDoApp.model.ToDo;
+
+@Service
+public class ToDoService {
+   
+	
+	List<ToDo>getAllToDoItems(){
+		
+	}
+	
+	ToDo getToDoItemById(){
+		
+	}
+	
+	boolean updateStatus(){
+		
+	}
+	
+	boolean saveorUpdateToDoItem(){
+		
+	}
+	
+	boolean deleteToDoItem(){
+		
+	}
+}

@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+     <h1>Learning Springboot with HTML Form - User input</h1>
+<form action="register" method="post">
+<label for="firstname">First name :</label> <br/>
+<i
+<

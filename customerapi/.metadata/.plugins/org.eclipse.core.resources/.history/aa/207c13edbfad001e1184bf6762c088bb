@@ -1,0 +1,64 @@
+package com.restapi.customer.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+
+import com.restapi.customer.entity.AuthRequest;
+import com.restapi.customer.entity.JwtAuthResponse;
+import com.restapi.customer.entity.UserInfo;
+import com.restapi.customer.service.JwtService;
+import com.restapi.customer.service.UserInfoService;
+
+
+
+@Controller
+//@RequestMapping("/auth")
+public class UserController {
+    @Autowired
+    private UserInfoService userInfoService;
+    @Autowired
+    private AuthenticationManager authenticationManager;
+    @Autowired
+    private JwtService jwtService;
+
+    @GetMapping("/welcome")
+    public String welcome(){
+        return "w";
+    }
+
+    @PostMapping("/register")
+    public String register(@RequestBody UserInfo userInfo){
+        return userInfoService.addUser(userInfo);
+
+    }
+    
+    @PostMapping("/login")
+    public ResponseEntity<JwtAuthResponse> loginUser(@RequestBody AuthRequest authRequest){
+        Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword()));
+        if(authenticate.isAuthenticated()){
+        	String token= jwtService.generateToken(authRequest.getEmail());
+        	JwtAuthResponse response = new JwtAuthResponse();
+        	response.setToken(token);
+        	response.setTokenUser(authRequest.getEmail());
+        	return new ResponseEntity<JwtAuthResponse>(response, HttpStatus.OK);
+        }else {
+            throw new UsernameNotFoundException("Invalid user request");
+        }
+    }
+    
+    @GetMapping("/getUsers")
+    public List<UserInfo> getAllUsers(){   	
+        return userInfoService.getAllUser();
+    }
+    
+
+}
